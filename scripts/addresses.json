@@ -1,0 +1,19 @@
+{
+  "mockSpyxMint": "EMqGxJdEaCEPxN5NhKY4sAoze877TRhfhVrXYLbg5GC8",
+  "mockSpyxMintAuthority": "8ieVC6ufupkxqCgAEoUEReYWkWZwLZQHK3u9RYZy8Ps6",
+  "mockSpyxDecimals": 6,
+  "usdcMint": "AXQKoNyChJ9vihK3qThe9UdT6xteoh1Lc4roqP98i2zW",
+  "demoVaultPda": "96ThTiiMHJLtQE9BfukzYUiHCNByptfkF6s1oiBbHYsR",
+  "demoVaultMaturity": 1789631658,
+  "demoVaultBump": 254,
+  "ptMint": "3GSyLYWRSZaNdPW41xcTrWrR7Qvn6X5Lv4F3d4CUHni3",
+  "ytMint": "HhKNM1MTQU1dG4jyyHnuT6cz4GSyeakR2yN8GGmBb4WE",
+  "vaultXstockAccount": "CRA1gHMXtuPK9MWZTvupxvbK9qqw2LRGZnwVjN7k7DFa",
+  "vaultUsdcAccount": "8WnwyYjzBFGX7F54MULcaMB589PTY1VyuPetj7MKiVkk",
+  "settled": true,
+  "ytDbcConfig": "9oZTSGNW2DQjXf2VuLCCT8A3rSzg7GTRnKoCtXRsNTfS",
+  "ytDbcPool": "FmPChn3VTSainyKArE7zFLn3FMxKnRwTxdLrgmyfVHg5",
+  "ytDbcBaseMint": "2pcVbKsAZZ2djVhsxMryypeTnfwev91NgwjEiVY8PKxU",
+  "ptDammPool": "8cwZ7yESFJw7DyM1JWVE92Zu9NHHX82jbdCau6v1oW7s",
+  "ytDammPool": "BvMKwwPFH781QqJuk4pRdvATg2rSuyHzVLuGMpgrax6o"
+}

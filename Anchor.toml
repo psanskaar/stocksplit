@@ -1,0 +1,22 @@
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+stocksplit = "9WRT68i9TJ1wi3fDv4offsxbNmkkstQAHY9XNN4YQnZG"
+
+[programs.devnet]
+stocksplit = "9WRT68i9TJ1wi3fDv4offsxbNmkkstQAHY9XNN4YQnZG"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "npx ts-mocha --require ts-node/register/transpile-only -p ./tsconfig.json -t 1000000 tests/stocksplit.ts"
+
+[test]
+startup_wait = 15000

@@ -1,0 +1,795 @@
+{
+    "version":  "0.1.0",
+    "name":  "stocksplit",
+    "instructions":  [
+                         {
+                             "name":  "initializeVault",
+                             "docs":  [
+                                          "Initialize a new vault for a given xStock mint and maturity timestamp.",
+                                          "Creates PT and YT mints, stores initial multiplier snapshot."
+                                      ],
+                             "accounts":  [
+                                              {
+                                                  "name":  "authority",
+                                                  "isMut":  true,
+                                                  "isSigner":  true
+                                              },
+                                              {
+                                                  "name":  "xstockMint",
+                                                  "isMut":  false,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "The xStock Token-2022 mint (e.g. SPYx)."
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "usdcMint",
+                                                  "isMut":  false,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "USDC mint (standard SPL token)"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vault",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "The vault PDA. Seeds: [\"vault\", xstock_mint, maturity_timestamp_le_bytes]"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ptMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "PT mint â€” created here, authority = vault PDA"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ytMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "YT mint â€” created here, authority = vault PDA"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vaultXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s xStock token account (Token-2022)"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vaultUsdcAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s USDC token account (standard SPL)"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "tokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "token2022Program",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "associatedTokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "systemProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              }
+                                          ],
+                             "args":  [
+                                          {
+                                              "name":  "maturityTimestamp",
+                                              "type":  "i64"
+                                          },
+                                          {
+                                              "name":  "initialMultiplierBits",
+                                              "type":  "u64"
+                                          }
+                                      ]
+                         },
+                         {
+                             "name":  "updateMultiplier",
+                             "docs":  [
+                                          "Update the current multiplier stored in the vault (authority-controlled oracle).",
+                                          "Call this when the SPYx ScaledUiAmount multiplier changes on-chain."
+                                      ],
+                             "accounts":  [
+                                              {
+                                                  "name":  "authority",
+                                                  "isMut":  false,
+                                                  "isSigner":  true,
+                                                  "docs":  [
+                                                               "Only the vault authority can update the multiplier"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vault",
+                                                  "isMut":  true,
+                                                  "isSigner":  false
+                                              }
+                                          ],
+                             "args":  [
+                                          {
+                                              "name":  "newMultiplierBits",
+                                              "type":  "u64"
+                                          }
+                                      ]
+                         },
+                         {
+                             "name":  "deposit",
+                             "docs":  [
+                                          "Deposit raw xStock tokens into the vault.",
+                                          "Mints an equal amount of PT and YT tokens to the depositor."
+                                      ],
+                             "accounts":  [
+                                              {
+                                                  "name":  "depositor",
+                                                  "isMut":  true,
+                                                  "isSigner":  true
+                                              },
+                                              {
+                                                  "name":  "vault",
+                                                  "isMut":  true,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "xstockMint",
+                                                  "isMut":  false,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "xStock Token-2022 mint â€” needed to read current multiplier"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "depositorXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Depositor\u0027s xStock token account (Token-2022)"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vaultXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s xStock token account"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "protocolFeeAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Protocol fee account for SPYx (Token-2022). Owned by vault.authority, mint == vault.xstock_mint."
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ptMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "PT mint â€” vault is authority"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ytMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "YT mint â€” vault is authority"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "depositorPtAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Depositor\u0027s PT token account (created if needed)"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "depositorYtAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Depositor\u0027s YT token account (created if needed)"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "tokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "token2022Program",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "associatedTokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "systemProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "rent",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              }
+                                          ],
+                             "args":  [
+                                          {
+                                              "name":  "amountRaw",
+                                              "type":  "u64"
+                                          }
+                                      ]
+                         },
+                         {
+                             "name":  "settle",
+                             "docs":  [
+                                          "After maturity: compute excess raw tokens representing accrued dividends,",
+                                          "swap them to USDC via Jupiter, store usdc_per_yt for YT claims.",
+                                          "Can only be called once."
+                                      ],
+                             "accounts":  [
+                                              {
+                                                  "name":  "caller",
+                                                  "isMut":  true,
+                                                  "isSigner":  true,
+                                                  "docs":  [
+                                                               "Anyone can call settle after maturity"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vault",
+                                                  "isMut":  true,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "xstockMint",
+                                                  "isMut":  false,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "xStock Token-2022 mint â€” to read current multiplier"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vaultXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s xStock account â€” we transfer excess out of here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vaultUsdcAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s USDC account â€” will receive Jupiter swap proceeds",
+                                                               "The caller is responsible for ensuring USDC lands here",
+                                                               "(via a separate Jupiter swap transaction submitted in the same bundle or before)"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "protocolUsdcFeeAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Protocol USDC fee account. Owned by vault.authority, mint == vault.usdc_mint."
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "callerXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "must be a valid xStock token account owned by the caller (settler)."
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "tokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "token2022Program",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "systemProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              }
+                                          ],
+                             "args":  [
+                                          {
+                                              "name":  "jupiterRouteData",
+                                              "type":  "bytes"
+                                          }
+                                      ]
+                         },
+                         {
+                             "name":  "redeemPt",
+                             "docs":  [
+                                          "After settlement: burn PT tokens and receive raw xStock at the snapshot ratio."
+                                      ],
+                             "accounts":  [
+                                              {
+                                                  "name":  "redeemer",
+                                                  "isMut":  true,
+                                                  "isSigner":  true
+                                              },
+                                              {
+                                                  "name":  "vault",
+                                                  "isMut":  true,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "xstockMint",
+                                                  "isMut":  false,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "xStock Token-2022 mint â€” to read current multiplier"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vaultXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s xStock account â€” source of redemption"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "redeemerXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "token account for the xStock mint owned by the redeemer."
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "redeemerPtAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Redeemer\u0027s PT token account â€” PT gets burned here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ptMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "PT mint â€” vault burns from here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "tokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "token2022Program",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              }
+                                          ],
+                             "args":  [
+                                          {
+                                              "name":  "amountRaw",
+                                              "type":  "u64"
+                                          }
+                                      ]
+                         },
+                         {
+                             "name":  "claimYt",
+                             "docs":  [
+                                          "After settlement: burn YT tokens and receive pro-rata USDC."
+                                      ],
+                             "accounts":  [
+                                              {
+                                                  "name":  "claimer",
+                                                  "isMut":  true,
+                                                  "isSigner":  true
+                                              },
+                                              {
+                                                  "name":  "vault",
+                                                  "isMut":  true,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "vaultUsdcAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s USDC account â€” source of YT claim payout"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "claimerUsdcAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Claimer\u0027s USDC account â€” receives USDC payout"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "claimerYtAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Claimer\u0027s YT token account â€” YT gets burned here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ytMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "YT mint â€” burned here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "usdcMint",
+                                                  "isMut":  false,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "USDC mint"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "tokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              }
+                                          ],
+                             "args":  [
+                                          {
+                                              "name":  "amountRaw",
+                                              "type":  "u64"
+                                          }
+                                      ]
+                         },
+                         {
+                             "name":  "withdraw",
+                             "docs":  [
+                                          "Before settlement: burn equal PT + YT and receive raw xStock back.",
+                                          "Early exit â€” only callable while vault is not yet settled."
+                                      ],
+                             "accounts":  [
+                                              {
+                                                  "name":  "withdrawer",
+                                                  "isMut":  true,
+                                                  "isSigner":  true
+                                              },
+                                              {
+                                                  "name":  "vault",
+                                                  "isMut":  true,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "xstockMint",
+                                                  "isMut":  false,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "xStock Token-2022 mint"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ptMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "PT mint â€” burned here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "ytMint",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "YT mint â€” burned here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "withdrawerPtAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Withdrawer\u0027s PT token account â€” PT burned from here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "withdrawerYtAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Withdrawer\u0027s YT token account â€” YT burned from here"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "withdrawerXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Withdrawer\u0027s xStock Token-2022 account â€” receives SPYx back",
+                                                               "token account for the xStock mint owned by the withdrawer."
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "vaultXstockAccount",
+                                                  "isMut":  true,
+                                                  "isSigner":  false,
+                                                  "docs":  [
+                                                               "Vault\u0027s xStock token account â€” source of returned SPYx"
+                                                           ]
+                                              },
+                                              {
+                                                  "name":  "tokenProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "token2022Program",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              },
+                                              {
+                                                  "name":  "systemProgram",
+                                                  "isMut":  false,
+                                                  "isSigner":  false
+                                              }
+                                          ],
+                             "args":  [
+                                          {
+                                              "name":  "amountRaw",
+                                              "type":  "u64"
+                                          }
+                                      ]
+                         }
+                     ],
+    "accounts":  [
+                     {
+                         "name":  "Vault",
+                         "type":  {
+                                      "kind":  "struct",
+                                      "fields":  [
+                                                     {
+                                                         "name":  "bump",
+                                                         "docs":  [
+                                                                      "Bump for this vault PDA"
+                                                                  ],
+                                                         "type":  "u8"
+                                                     },
+                                                     {
+                                                         "name":  "xstockMint",
+                                                         "docs":  [
+                                                                      "The xStock token mint (e.g. SPYx). Must be Token-2022 with ScaledUiAmount."
+                                                                  ],
+                                                         "type":  "publicKey"
+                                                     },
+                                                     {
+                                                         "name":  "ptMint",
+                                                         "docs":  [
+                                                                      "The PT (Principal Token) mint â€” standard SPL mint, authority = vault PDA"
+                                                                  ],
+                                                         "type":  "publicKey"
+                                                     },
+                                                     {
+                                                         "name":  "ytMint",
+                                                         "docs":  [
+                                                                      "The YT (Yield Token) mint â€” standard SPL mint, authority = vault PDA"
+                                                                  ],
+                                                         "type":  "publicKey"
+                                                     },
+                                                     {
+                                                         "name":  "vaultXstockAccount",
+                                                         "docs":  [
+                                                                      "Vault\u0027s xStock token account"
+                                                                  ],
+                                                         "type":  "publicKey"
+                                                     },
+                                                     {
+                                                         "name":  "vaultUsdcAccount",
+                                                         "docs":  [
+                                                                      "Vault\u0027s USDC token account (receives proceeds from Jupiter swap at settlement)"
+                                                                  ],
+                                                         "type":  "publicKey"
+                                                     },
+                                                     {
+                                                         "name":  "usdcMint",
+                                                         "docs":  [
+                                                                      "USDC mint (for settlement)"
+                                                                  ],
+                                                         "type":  "publicKey"
+                                                     },
+                                                     {
+                                                         "name":  "maturityTimestamp",
+                                                         "docs":  [
+                                                                      "Unix timestamp after which settle/redeem/claim can be called"
+                                                                  ],
+                                                         "type":  "i64"
+                                                     },
+                                                     {
+                                                         "name":  "multiplierAtDepositBits",
+                                                         "docs":  [
+                                                                      "ScaledUiAmount multiplier snapshotted at first deposit.",
+                                                                      "Stored as f64 bits (u64) to avoid floating-point in account struct.",
+                                                                      "Read with: f64::from_bits(multiplier_at_deposit)"
+                                                                  ],
+                                                         "type":  "u64"
+                                                     },
+                                                     {
+                                                         "name":  "totalDepositedRaw",
+                                                         "docs":  [
+                                                                      "Total raw xStock deposited into this vault (across all depositors)"
+                                                                  ],
+                                                         "type":  "u64"
+                                                     },
+                                                     {
+                                                         "name":  "totalPtOutstanding",
+                                                         "docs":  [
+                                                                      "Total PT tokens outstanding (equals total_deposited_raw until redemptions)"
+                                                                  ],
+                                                         "type":  "u64"
+                                                     },
+                                                     {
+                                                         "name":  "totalYtOutstanding",
+                                                         "docs":  [
+                                                                      "Total YT tokens outstanding (equals total_deposited_raw until claims)"
+                                                                  ],
+                                                         "type":  "u64"
+                                                     },
+                                                     {
+                                                         "name":  "usdcPerYtBits",
+                                                         "docs":  [
+                                                                      "USDC per raw YT unit, set at settlement. Stored as f64 bits.",
+                                                                      "Read with: f64::from_bits(usdc_per_yt_bits)"
+                                                                  ],
+                                                         "type":  "u64"
+                                                     },
+                                                     {
+                                                         "name":  "currentMultiplierBits",
+                                                         "docs":  [
+                                                                      "Current ScaledUiAmount multiplier, updated by update_multiplier() instruction.",
+                                                                      "In production this would be read directly from SPYx TLV data;",
+                                                                      "for the hackathon this is authority-controlled to avoid spl-token-2022 version conflicts."
+                                                                  ],
+                                                         "type":  "u64"
+                                                     },
+                                                     {
+                                                         "name":  "settled",
+                                                         "docs":  [
+                                                                      "Whether settle() has been called"
+                                                                  ],
+                                                         "type":  "bool"
+                                                     },
+                                                     {
+                                                         "name":  "authority",
+                                                         "docs":  [
+                                                                      "Creator / admin of this vault"
+                                                                  ],
+                                                         "type":  "publicKey"
+                                                     }
+                                                 ]
+                                  }
+                     }
+                 ],
+    "errors":  [
+                   {
+                       "code":  6000,
+                       "name":  "AlreadySettled",
+                       "msg":  "Vault has already been settled"
+                   },
+                   {
+                       "code":  6001,
+                       "name":  "AlreadyMatured",
+                       "msg":  "Vault is past maturity â€” deposits are no longer accepted"
+                   },
+                   {
+                       "code":  6002,
+                       "name":  "NotSettled",
+                       "msg":  "Vault has not been settled yet â€” call settle() first"
+                   },
+                   {
+                       "code":  6003,
+                       "name":  "NotMatured",
+                       "msg":  "Maturity timestamp has not been reached yet"
+                   },
+                   {
+                       "code":  6004,
+                       "name":  "InvalidMaturity",
+                       "msg":  "Maturity timestamp is in the past â€” must be a future timestamp"
+                   },
+                   {
+                       "code":  6005,
+                       "name":  "ZeroAmount",
+                       "msg":  "Amount must be greater than zero"
+                   },
+                   {
+                       "code":  6006,
+                       "name":  "InsufficientPtBalance",
+                       "msg":  "Insufficient PT balance to redeem"
+                   },
+                   {
+                       "code":  6007,
+                       "name":  "InsufficientYtBalance",
+                       "msg":  "Insufficient YT balance to claim"
+                   },
+                   {
+                       "code":  6008,
+                       "name":  "InsufficientVaultBalance",
+                       "msg":  "Insufficient xStock in vault for this redemption"
+                   },
+                   {
+                       "code":  6009,
+                       "name":  "MissingScaledUiAmountExtension",
+                       "msg":  "The provided mint is not a Token-2022 mint with ScaledUiAmount extension"
+                   },
+                   {
+                       "code":  6010,
+                       "name":  "ZeroExcess",
+                       "msg":  "Settlement produced zero excess â€” no dividends have accrued"
+                   },
+                   {
+                       "code":  6011,
+                       "name":  "MathOverflow",
+                       "msg":  "Arithmetic overflow in settlement calculation"
+                   },
+                   {
+                       "code":  6012,
+                       "name":  "ZeroUsdcPerYt",
+                       "msg":  "USDC per YT is zero â€” vault was settled with no USDC proceeds"
+                   },
+                   {
+                       "code":  6013,
+                       "name":  "Unauthorized",
+                       "msg":  "Signer is not the vault authority"
+                   },
+                   {
+                       "code":  6014,
+                       "name":  "WithdrawAfterSettlement",
+                       "msg":  "Cannot withdraw after vault has been settled"
+                   },
+                   {
+                       "code":  6014,
+                       "name":  "FeeTooLarge",
+                       "msg":  "Fee amount equals or exceeds deposit amount -- fee rate too large"
+                   },
+                   {
+                       "code":  6015,
+                       "name":  "InvalidFeeAccount",
+                       "msg":  "Protocol fee account has invalid owner or mint mismatch"
+                   }
+               ],
+    "metadata":  {
+                     "address":  "9WRT68i9TJ1wi3fDv4offsxbNmkkstQAHY9XNN4YQnZG",
+                     "name":  "stocksplit",
+                     "version":  "0.1.0",
+                     "spec":  "0.1.0"
+                 },
+    "address":  "9WRT68i9TJ1wi3fDv4offsxbNmkkstQAHY9XNN4YQnZG"
+}

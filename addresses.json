@@ -1,0 +1,30 @@
+{
+  "network": "devnet",
+  "programId": "9WRT68i9TJ1wi3fDv4offsxbNmkkstQAHY9XNN4YQnZG",
+  "authority": "8ieVC6ufupkxqCgAEoUEReYWkWZwLZQHK3u9RYZy8Ps6",
+  "demoVault": {
+    "vaultPda": "96ThTiiMHJLtQE9BfukzYUiHCNByptfkF6s1oiBbHYsR",
+    "vaultXstockAccount": "CRA1gHMXtuPK9MWZTvupxvbK9qqw2LRGZnwVjN7k7DFa",
+    "vaultUsdcAccount": "8WnwyYjzBFGX7F54MULcaMB589PTY1VyuPetj7MKiVkk",
+    "settled": true
+  },
+  "tokens": {
+    "spyxMint": "EMqGxJdEaCEPxN5NhKY4sAoze877TRhfhVrXYLbg5GC8",
+    "ptMint": "3GSyLYWRSZaNdPW41xcTrWrR7Qvn6X5Lv4F3d4CUHni3",
+    "ytMint": "HhKNM1MTQU1dG4jyyHnuT6cz4GSyeakR2yN8GGmBb4WE",
+    "usdcMint": "AXQKoNyChJ9vihK3qThe9UdT6xteoh1Lc4roqP98i2zW"
+  },
+  "pools": {
+    "ptDammPool": "8cwZ7yESFJw7DyM1JWVE92Zu9NHHX82jbdCau6v1oW7s",
+    "ytDammPool": "BvMKwwPFH781QqJuk4pRdvATg2rSuyHzVLuGMpgrax6o",
+    "ytDbcPool": "FmPChn3VTSainyKArE7zFLn3FMxKnRwTxdLrgmyfVHg5"
+  },
+  "feeCollectors": {
+    "protocolSpyxFeeAccount": "6qPBcP5wrj5VRntR8TswdbV3x5FHMrCmWFNwqZnq1Tgn",
+    "protocolUsdcFeeAccount": "4PDpCWzeo2ruaT3WYAaL2A22PUFYiFSEskCJ12yyefTi"
+  },
+  "pythFeeds": {
+    "vooFeedId": "0x236b30dd09a9c00dfeec156c7b1efd646c0f01825a1758e3e4a0679e3bdff179",
+    "spyxFeedId": "0x19e09bb805456ada3979a7d1cbb4b6d63babc3a0f8e8a9509f68aca80f0612684"
+  }
+}
