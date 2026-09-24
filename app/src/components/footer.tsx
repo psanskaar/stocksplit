@@ -24,7 +24,6 @@ export function Footer() {
               >
                 Stocklana_
               </a>
-              {" "}· $126K · Sep 26 2026
             </div>
           </div>
 
@@ -124,7 +123,6 @@ export function Footer() {
 
         <div className="pt-6 border-t border-[#1e1e3a] flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
           <div>© {new Date().getFullYear()} StockSplit Protocol. Solana Devnet.</div>
-          <div>Token-2022 ScaledUiAmount · Meteora DBC · Meteora DAMM v2 · Pyth</div>
         </div>
       </div>
     </footer>
