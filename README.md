@@ -333,4 +333,4 @@ MIT
 
 ---
 
-*Built for [Stocklana_](https://hackathons.solana.com/hackathons/stocklana) by [@zalvrost](https://github.com/zalvrost)*
+*Built for [Stocklana_](https://hackathons.solana.com/hackathons/stocklana) by @psanskaar](https://github.com/psanskaar)*
