@@ -4,7 +4,7 @@ const { Connection, Keypair, PublicKey, sendAndConfirmTransaction } = require('@
 const BN = require('bn.js');
 const AmmImpl = require('@meteora-ag/dynamic-amm-sdk').default;
 
-const RPC_URL = process.env.SOLANA_RPC_URL || 'https://greatest-greatest-mound.solana-devnet.quiknode.pro/e667647b420748a3c7f7f91ecd9b13328b62540c/';
+const RPC_URL = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
 const KEYPAIR_FILE = path.join(__dirname, '..', '..', 'keypair.json');
 
 const PT_MINT = new PublicKey('3GSyLYWRSZaNdPW41xcTrWrR7Qvn6X5Lv4F3d4CUHni3');

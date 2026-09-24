@@ -105,7 +105,7 @@ export function Footer() {
             <ul className="space-y-2 text-xs">
               <li>
                 <a
-                  href="https://github.com"
+                  href="https://github.com/psanskaar/stocksplit"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white flex items-center gap-1 transition-colors"

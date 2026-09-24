@@ -2,11 +2,11 @@
 
 > Yield-stripping protocol for tokenized equities on Solana. Decompose any Token-2022 stock into a discounted Principal Token and a pure dividend Yield Token, tradeable on live Meteora AMM pools.
 
-**Live Application**: [https://stocksplit-app.vercel.app](https://stocksplit-app.vercel.app)  
-**Split SPYx**: [https://stocksplit-app.vercel.app/split](https://stocksplit-app.vercel.app/split)  
-**Trade PT & YT**: [https://stocksplit-app.vercel.app/trade](https://stocksplit-app.vercel.app/trade)  
-**Redeem Positions**: [https://stocksplit-app.vercel.app/redeem](https://stocksplit-app.vercel.app/redeem)  
-**Technical Documentation**: [https://stocksplit-app.vercel.app/docs](https://stocksplit-app.vercel.app/docs)
+**Live Application**: [https://stocksplit.vercel.app](https://stocksplit.vercel.app)  
+**Split SPYx**: [https://stocksplit.vercel.app/split](https://stocksplit.vercel.app/split)  
+**Trade PT & YT**: [https://stocksplit.vercel.app/trade](https://stocksplit.vercel.app/trade)  
+**Redeem Positions**: [https://stocksplit.vercel.app/redeem](https://stocksplit.vercel.app/redeem)  
+**Technical Documentation**: [https://stocksplit.vercel.app/docs](https://stocksplit.vercel.app/docs)
 
 StockSplit takes a tokenized S&P 500 stock (SPYx) that accrues dividends through Token-2022's `ScaledUiAmountConfig` multiplier and splits it into two independent, tradeable instruments: a **Principal Token (PT)** representing discounted capital exposure, and a **Yield Token (YT)** representing the pure dividend cash flow settled in USDC. The protocol enforces the yield-stripping invariant `P_Stock = P_PT + P_YT` at all times, verified on-chain and across two live Meteora DAMM v2 liquidity pools.
 
