@@ -26,19 +26,6 @@ export function Hero() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/15 to-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative max-w-5xl mx-auto text-center space-y-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#12122a] border border-[#1e1e3a] text-xs font-medium text-slate-300 shadow-sm">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-          <a
-            href="https://hackathons.solana.com/hackathons/stocklana"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            Stocklana_ Hackathon
-          </a>
-          <span className="text-slate-600">·</span>
-          <span className="text-indigo-400 font-semibold">$126K Prize Pool · Sep 26</span>
-        </div>
 
         {/* Main Headline */}
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
