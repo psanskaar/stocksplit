@@ -69,15 +69,15 @@ export async function sendAndConfirmWithRetry(
       // 3. Send with skipPreflight: true
       options?.onSignPrompt?.();
 
-      if (wallet.sendTransaction) {
-        sig = await wallet.sendTransaction(tx, connection, {
+      if (wallet.signTransaction) {
+        const signed = await wallet.signTransaction(tx);
+        sig = await connection.sendRawTransaction(signed.serialize(), {
           skipPreflight: true,
           preflightCommitment: "confirmed",
           maxRetries: 3,
         });
-      } else if (wallet.signTransaction) {
-        const signed = await wallet.signTransaction(tx);
-        sig = await connection.sendRawTransaction(signed.serialize(), {
+      } else if (wallet.sendTransaction) {
+        sig = await wallet.sendTransaction(tx, connection, {
           skipPreflight: true,
           preflightCommitment: "confirmed",
           maxRetries: 3,
